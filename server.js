@@ -9,7 +9,7 @@ var morgan     = require('morgan'); 		// used to see requests
 var mongoose   = require('mongoose');
 var config 	   = require('./config');
 var path 	   = require('path');
-var port = process.env.PORT || 8080;
+
 // APP CONFIGURATION ==================
 // ====================================
 // use body parser so we can grab information from POST requests
@@ -49,7 +49,7 @@ app.get('*', function(req, res) {
 	res.sendFile(path.join(__dirname + '/public/app/views/index.html'));
 });
 
-// start server
-app.listen(port, function() {
-	console.log('Our app is running on http://localhost:' + port);
-});
+// START THE SERVER
+// ====================================
+app.listen(config.port);
+console.log('Magic happens on port ' + config.port);
