@@ -99,4 +99,56 @@ angular.module('userCtrl', ['userService'])
 			});
 	};
 
+})
+.controller('billController', function(billfac) {
+
+	// bind this to vm (view-model)
+  	var vm = this;
+    
+    billfac.all()
+		.success(function(data) {
+
+			// when all the users come back, remove the processing variable
+			vm.processing = false;
+
+			// bind the users that come back to vm.users
+			vm.bills = data;
+		});
+
+	// variable to hide/show elements of the view
+	// differentiates between create or edit pages
+	vm.type = 'create';
+
+	// function to create a user
+	vm.saveBill = function() {
+		//vm.processing = true;
+		vm.message = '';
+
+		// use the create function in the billService
+		billfac.create(vm.billData)
+			.success(function(data) {
+				//vm.processing = false;
+				vm.billData = {};
+				vm.message = data.message;
+				//console.log(data.message);
+			});
+			
+	};	
+
+ 
+
+})
+
+.controller('adminController', function($scope,$location) {
+	$scope.submit=function(){
+		var username=$scope.adminUsername;
+		var password=$scope.adminPassword;
+		if ($scope.adminUsername =='admin'&& $scope.adminPassword== 'admin') {
+			$location.path('/summary');
+		}else
+		{
+			alert("wrong stuff");
+		}
+	}
+	
 });

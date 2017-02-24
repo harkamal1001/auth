@@ -33,4 +33,38 @@ angular.module('userService', [])
 	// return our entire userFactory object
 	return userFactory;
 
+})
+.factory('billfac', function($http) {
+
+	// create a new object
+	var billFactory = {};
+
+	// get a single bill
+	billFactory.get = function(id) {
+		return $http.get('/api/bills/' + id);
+	};
+
+	// get all bills
+	billFactory.all = function() {
+		return $http.get('/api/bills/');
+	};
+
+	// create a bill
+	billFactory.create = function(billData) {
+		return $http.post('/api/bills/', billData);
+	};
+
+	// update a bill
+	billFactory.update = function(id, billData) {
+		return $http.put('/api/bills/' + id, billData);
+	};
+
+	// delete a bill
+	billFactory.delete = function(id) {
+		return $http.delete('/api/bills/' + id);
+	};
+
+	// return our entire billFactory object
+	return billFactory;
+
 });

@@ -1,5 +1,6 @@
 var bodyParser = require('body-parser'); 	// get body-parser
 var User       = require('../models/user');
+var Bill       = require('../models/Bill');
 var jwt        = require('jsonwebtoken');
 var config     = require('../../config');
 
@@ -69,9 +70,7 @@ module.exports = function(app, express) {
 	        var token = jwt.sign({
 	        	name: user.name,
 	        	username: user.username
-	        }, superSecret, {
-	          expiresInMinutes: 1440 // expires in 24 hours
-	        });
+	        }, superSecret);
 
 	        // return the information including token as JSON
 	        res.json({
@@ -87,7 +86,7 @@ module.exports = function(app, express) {
 	});
 
 	// route middleware to verify a token
-	apiRouter.use(function(req, res, next) {
+/*	apiRouter.use(function(req, res, next) {
 		// do logging
 		console.log('Somebody just came to our app!');
 
@@ -124,6 +123,7 @@ module.exports = function(app, express) {
 	    
 	  }
 	});
+	*/
 
 	// test route to make sure everything is working 
 	// accessed at GET http://localhost:8080/api
@@ -215,6 +215,92 @@ module.exports = function(app, express) {
 				res.json({ message: 'Successfully deleted' });
 			});
 		});
+         apiRouter.get('/', function(req, res) {
+	res.json({ message: 'hooray! welcome to our bill api!' });	
+});
+
+// on routes that end in /Bills
+// ----------------------------------------------------
+apiRouter.route('/Bills')
+
+	// create a bill (accessed at POST http://localhost:8080/Bills)
+	.post(function(req, res) {
+		
+		var bill = new Bill();		// create a new instance of the Bill model
+		bill.billNumber = req.body.billNumber;  // set the bills billNumber (comes from the request)
+		bill.rating = req.body.rating;  // set the bills rating (comes from the request)
+		bill.comment = req.body.comment;  // set the bills comment (comes from the request)
+
+		bill.save(function(err) {
+			if (err) {
+				// duplicate entry
+				if (err.code == 11000) 
+					return res.json({ success: false, message: 'A bill with that billnumber already exists. '});
+				else 
+					return res.send(err);
+			}
+
+			// return a message
+			res.json({ message: 'Rating created!' });
+		});
+
+	})
+
+	// get all the Bills (accessed at GET http://localhost:8080/api/Bills)
+	.get(function(req, res) {
+		Bill.find(function(err, bills) {
+			if (err) res.send(err);
+
+			// return the Bills
+			res.json(bills);
+		});
+	});
+
+// on routes that end in /Bills/:Bill_id
+// ----------------------------------------------------
+apiRouter.route('/Bills/:Bill_id')
+
+	// get the Bill with that id
+	.get(function(req, res) {
+		Bill.findById(req.params.Bill_id, function(err, bill) {
+			if (err) res.send(err);
+
+			res.json(bill);
+		});
+	})
+
+	// update the Bill with this id
+	.put(function(req, res) {
+		Bill.findById(req.params.Bill_id, function(err, bill) {
+
+			if (err) res.send(err);
+
+			// set the new Bill information if it exists in the request
+			if (req.body.billNumber) bill.billNumber = req.body.billNumber;
+			if (req.body.rating) bill.rating = req.body.rating;
+			if (req.body.comment) bill.comment = req.body.comment;
+
+			bill.save(function(err) {
+				if (err) res.send(err);
+
+				// return a message
+				res.json({ message: 'Bill updated!' });
+			});
+
+		});
+	})
+
+	// delete the Bill with this id
+	.delete(function(req, res) {
+		Bill.remove({
+			_id: req.params.bill_id
+		}, function(err, bill) {
+			if (err) res.send(err);
+
+			res.json({ message: 'Successfully deleted' });
+		});
+	});
+
 
 	// api endpoint to get user information
 	apiRouter.get('/me', function(req, res) {
