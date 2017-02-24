@@ -3,11 +3,11 @@
   "main": "server.js",
   "dependencies": {
     "all": "0.0.0",
-    "bcrypt-nodejs": "latest",
-    "body-parser": "latest",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.16.1",
     "express": "^4.14.1",
-    "jsonwebtoken": "latest",
-    "mongoose": "latest",
-    "morgan": "latest"
+    "jsonwebtoken": "^7.3.0",
+    "mongoose": "^4.8.4",
+    "morgan": "^1.8.1"
   }
 }
